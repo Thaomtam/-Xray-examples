@@ -5,6 +5,8 @@ Chạy lệnh sau để cài đặt Xray:
 
 ```bash
 bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u root
+``
+
 ```
 
 # Đường dẫn file cấu hình Xray
