@@ -39,7 +39,7 @@
         },
         "xhttpSettings": {
           "mode": "auto",
-		  "host": "",
+          "host": "",
           "path": "/lien-he"
         }
       }
