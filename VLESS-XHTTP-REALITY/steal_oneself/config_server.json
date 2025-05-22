@@ -1,0 +1,58 @@
+{
+  "log": {
+    "loglevel": "debug"
+  },
+  "inbounds": [
+    {
+      "tag": "dokodemo-in",
+      "port": 443,
+      "protocol": "dokodemo-door",
+      "settings": {
+        "address": "127.0.0.1",
+        "port": 8001
+      }
+    },
+    {
+      "listen": "127.0.0.1",
+      "port": 8001,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "thaomtam"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "security": "reality",
+        "realitySettings": {
+          "dest": "c4studio.vn:443",
+          "serverNames": [
+            "c4studio.vn"
+          ],
+          "privateKey": "iPFLvcKpdcx_KLXNccPte3epjRUP9UNa06U4tJYy-2k",
+          "shortIds": [
+            "0123456789abcdef"
+          ]
+        },
+        "xhttpSettings": {
+          "mode": "auto",
+		  "host": "",
+          "path": "/lien-he"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ]
+}
