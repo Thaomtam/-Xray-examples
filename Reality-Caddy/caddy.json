@@ -1,0 +1,136 @@
+{
+  "apps": {
+    "http": {
+      "servers": {
+        "srvh1": {
+          "listen": [
+            ":80"
+          ],
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "static_response",
+                  "headers": {
+                    "Location": [
+                      "https://{http.request.host}{http.request.uri}"
+                    ]
+                  },
+                  "status_code": 301
+                }
+              ]
+            }
+          ],
+          "protocols": [
+            "h1"
+          ]
+        },
+        "srvh2": {
+          "listen": [
+            "127.0.0.1:8003"
+          ],
+          "listener_wrappers": [
+            {
+              "wrapper": "proxy_protocol",
+              "allow": [
+                "127.0.0.1/32"
+              ]
+            },
+            {
+              "wrapper": "tls"
+            }
+          ],
+          "routes": [
+            {
+              "handle": [
+                {
+                  "handler": "headers",
+                  "response": {
+                    "set": {
+                      "Strict-Transport-Security": [
+                        "max-age=31536000; includeSubDomains; preload"
+                      ],
+                      "Alt-Svc": [
+                        "h3=\":443\"; ma=2592000"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "handler": "reverse_proxy",
+                  "transport": {
+                    "protocol": "http",
+                    "tls": {}
+                  },
+                  "upstreams": [
+                    {
+                      "dial": "c4studio.vn:443"
+                    }
+                  ],
+                  "headers": {
+                    "request": {
+                      "set": {
+                        "Host": [
+                          "{http.reverse_proxy.upstream.hostport}"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "tls_connection_policies": [
+            {
+              "match": {
+                "sni": [
+                  "tls.khosihuythao.com"
+                ]
+              },
+              "cipher_suites": [
+                "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384",
+                "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256",
+                "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
+              ],
+              "curves": [
+                "x25519",
+                "secp521r1",
+                "secp384r1",
+                "secp256r1"
+              ],
+              "alpn": [
+                "h3",
+                "h2",
+                "http/1.1"
+              ]
+            }
+          ],
+          "protocols": [
+            "h1",
+            "h2",
+            "h3"
+          ]
+        }
+      }
+    },
+    "tls": {
+      "certificates": {
+        "automate": [
+          "tls.khosihuythao.com"
+        ]
+      },
+      "automation": {
+        "policies": [
+          {
+            "issuers": [
+              {
+                "module": "acme",
+                "email": "ngthanhhuy951@gmail.com"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
