@@ -1,53 +1,55 @@
-## **Giới thiệu cấu hình:**
+## **Configuration Overview**
 
-| | Không cần đăng ký tên miền | Giải quyết TLS trong TLS | Tích hợp ghép kênh | Truy cập qua CDN |
+| | No Domain Registration Required | Resolves TLS in TLS | Built-in Multiplexing | Accessible via CDN |
 | :--- | :---: | :---: | :---: | :---: |
-| **VLESS-Tầm-Góc-THỰC-TỰ** | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: |
-| **VLESS-TLS-Tầm nhìn** | :x: | :heavy_check_mark: | :x: | :x: |
+| **VLESS-Vision-REALITY** | :heavy_check_mark: | :heavy_check_mark: | :x: | :x: |
+| **VLESS-Vision-TLS** | :x: | :heavy_check_mark: | :x: | :x: |
 | **VLESS-gRPC/HTTP2-REALITY** | :heavy_check_mark: | :x: | :heavy_check_mark: | :x: |
 | **VLESS-gRPC-TLS** | :x: | :x: | :heavy_check_mark: | :heavy_check_mark: |
 | **VLESS-WebSocket/HTTPUpgrade-TLS** | :x: | :x: | :x: | :heavy_check_mark: |
 
-| | Sử dụng uTLS | Sử dụng Vision | Dấu vân tay TLS của máy chủ | Giao thức TCP | Giao thức UDP | MPTCP |
+| | Uses uTLS | Uses Vision | Server TLS Fingerprint | Mux(TCP) | Mux(UDP) | MPTCP |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **VLESS-Tầm-Góc-THỰC-TỰ** | Bắt buộc | Khuyến nghị | **1** | **2** | :heavy_check_mark: | :heavy_check_mark: |
-| **VLESS-TLS-Tầm nhìn** | Khuyến nghị | Khuyến nghị | Đi | **2** | :heavy_check_mark: | :heavy_check_mark: |
-| **VLESS-gRPC/HTTP2-REALITY** | Bắt buộc | Không được phép | **1** | **3** | :heavy_check_mark: | :heavy_check_mark: |
-| **VLESS-gRPC-TLS** | Khuyến nghị | Không thể | Nginx | ​​:heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| **VLESS-WebSocket/HTTPUpgrade-TLS** | Khuyến nghị | Không nên | Nginx | ​​:heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| **VLESS-Vision-REALITY** | Required | Recommended | **1** | **2** | :heavy_check_mark: | :heavy_check_mark: |
+| **VLESS-Vision-TLS** | Recommended | Recommended | Go | **2** | :heavy_check_mark: | :heavy_check_mark: |
+| **VLESS-gRPC/HTTP2-REALITY** | Required | Not Supported | **1** | **3** | :heavy_check_mark: | :heavy_check_mark: |
+| **VLESS-gRPC-TLS** | Recommended | Not Supported | Nginx | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| **VLESS-WebSocket/HTTPUpgrade-TLS** | Recommended | Not Supported | Nginx | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 
-**1:** Được xác định bởi `"dest": "",` trang web mục tiêu, chẳng hạn như Nginx khi tự đánh cắp<br>
-**2:** Không thể thực hiện khi sử dụng Vision<br>
-**3:** Tích hợp ghép kênh
+**1:** Determined by `"dest": "",` target website, e.g., Nginx when self-hosted  
+**2:** Not supported when using Vision  
+**3:** Built-in multiplexing
 
 [**Mux**](https://xtls.github.io/Xray-docs-next/config/outbound.html#muxobject)
 
 ```jsonc
-"mux": {
-"enabled": true, // nếu đang chơi game, false
-"concurrency": -1, // Không sử dụng Mux(TCP)
-"xudpConcurrency": 16, // Sử dụng Mux(UDP), là UDP trên TCP. Nếu sử dụng Vision, phần đệm sẽ được thêm vào.
-"xudpProxyUDP443": "từ chối"
-}
+            "mux": {
+                "enabled": true, // Set to false for gaming
+                "concurrency": -1, // Disables Mux(TCP)
+                "xudpConcurrency": 16, // Enables Mux(UDP), UDP over TCP; adds padding when using Vision
+                "xudpProxyUDP443": "reject"
+            }
 ```
 
-> Cấu hình Mux chỉ cần được bật ở phía máy khách và phía máy chủ sẽ tự động điều chỉnh
+> Mux configuration only needs to be enabled on the client; the server auto-adapts.
 
 [**MPTCP**](https://github.com/XTLS/Xray-core/pull/2520#issuecomment-1711212084)
 
 ```jsonc
-"sockopt": {
-"tcpMptcp": đúng,
-"tcpNoDelay": đúng
-}
+                "sockopt": {
+                    "tcpMptcp": true,
+                    "tcpNoDelay": true
+                }
 ```
 
-> Cấu hình MPTCP cần được bật trên cả máy khách và máy chủ<br>
-> Yêu cầu Xray-core phiên bản 1.8.6 trở lên<br>
-> Yêu cầu phiên bản hạt nhân Linux 5.6 trở lên
+> MPTCP configuration must be enabled on both client and server.  
+> Requires Xray-core version 1.8.6 or higher.  
+> Requires Linux kernel version 5.6 or higher.
 
-:+1:**XTLS Vision [Nguyên lý](https://github.com/XTLS/Xray-core/discussions/1295) [Hướng dẫn cài đặt](https://github.com/chika0801/Xray-install)**
+:+1: **XTLS Vision [How It Works](https://github.com/XTLS/Xray-core/discussions/1295) [Installation Guide](https://github.com/chika0801/Xray-install)**
 
-:+1:**THỰC TẾ [Triết lý thiết kế](https://github.com/XTLS/Xray-core/issues/1689#issuecomment-1439447009) [Nguyên tắc](https://github.com/XTLS/Xray-core/issues/1891#issuecomment-1495439413) [Hướng dẫn cấu hình](https://github.com/XTLS/REALITY#readme)**
+:+1: **REALITY [Design Philosophy](https://github.com/XTLS/Xray-core/issues/1689#issuecomment-1439447009) [Technical Details](https://github.com/XTLS/Xray-core/issues/1891#issuecomment-1495439413) [Configuration Guide](https://github.com/XTLS/REALITY#readme)**
 
-## **[Máy khách GUI](https://github.com/XTLS/Xray-core/blob/main/README.md#gui-clients)**
+## **[GUI Clients](https://github.com/XTLS/Xray-core/blob/main/README.md#gui-clients)**
+
+---
