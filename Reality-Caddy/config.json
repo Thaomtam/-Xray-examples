@@ -39,9 +39,9 @@
         "security": "reality",
         "realitySettings": {
           "dest": "8003",
-		  "xver": 2,
+          "xver": 2,
           "serverNames": [
-            "anycaddy.khosihuythao.com"
+            "anytls.ggff.net"
           ],
           "privateKey": "iPFLvcKpdcx_KLXNccPte3epjRUP9UNa06U4tJYy-2k",
           "shortIds": [
@@ -78,7 +78,7 @@
           "dokodemo-in"
         ],
         "domain": [
-          "anycaddy.khosihuythao.com"
+          "anytls.ggff.net"
         ],
         "outboundTag": "direct"
       },

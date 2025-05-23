@@ -84,7 +84,7 @@
             {
               "match": {
                 "sni": [
-                  "tls.khosihuythao.com"
+                  "anytls.ggff.net"
                 ]
               },
               "cipher_suites": [
@@ -116,7 +116,7 @@
     "tls": {
       "certificates": {
         "automate": [
-          "tls.khosihuythao.com"
+          "anytls.ggff.net"
         ]
       },
       "automation": {
