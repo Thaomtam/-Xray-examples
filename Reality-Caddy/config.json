@@ -1,16 +1,27 @@
 {
   "log": {
-    "loglevel": "debug"
+    "loglevel": "warning"
+  },
+  "dns": {
+    "servers": [
+      "https+local://1.1.1.1/dns-query"
+    ],
+    "queryStrategy": "UseIP"
   },
   "inbounds": [
     {
       "tag": "dokodemo-in",
       "port": 443,
       "protocol": "dokodemo-door",
+      "streamSettings": {
+        "sockopt": {
+          "tproxy": "tproxy"
+        }
+      },
       "settings": {
         "address": "127.0.0.1",
         "port": 8001,
-        "network": "tcp"
+        "network": "tcp,udp"
       },
       "sniffing": {
         "enabled": true,
@@ -50,29 +61,60 @@
         }
       },
       "sniffing": {
-        "enabled": false,
+        "enabled": true,
         "destOverride": [
           "http",
           "tls",
           "quic"
         ],
-        "routeOnly": false
+        "routeOnly": true
       }
     }
   ],
   "outbounds": [
     {
       "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "UseIP"
+      },
       "tag": "direct"
     },
     {
       "protocol": "blackhole",
       "tag": "block"
+    },
+    {
+      "protocol": "wireguard",
+      "settings": {
+        "secretKey": "kPAeFBL1c6LtE7OyJRZ/rzV5cZ6BBAHBQy4ZcpPV+G4=",
+        "address": [
+          "172.16.0.2/32",
+          "2606:4700::/128"
+        ],
+        "peers": [
+          {
+            "publicKey": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+            "allowedIPs": [
+              "0.0.0.0/0",
+              "::/0"
+            ],
+            "endpoint": "162.159.192.1:2408"
+          }
+        ],
+        "reserved": [
+          125,
+          21,
+          126
+        ],
+        "mtu": 1280,
+        "domainStrategy": "ForceIPv6v4"
+      },
+      "tag": "warp"
     }
   ],
   "routing": {
     "domainStrategy": "IPIfNonMatch",
-	"rules": [
+    "rules": [
       {
         "inboundTag": [
           "dokodemo-in"
@@ -83,6 +125,40 @@
         "outboundTag": "direct"
       },
       {
+        "domain": [
+          "telegram.org",
+          "telegram.ph",
+          "ipleak.net"
+        ],
+        "outboundTag": "warp"
+      },
+      {
+        "ip": [
+          "91.108.56.0/22",
+          "91.108.4.0/22",
+          "91.108.8.0/22",
+          "91.108.16.0/22",
+          "91.108.12.0/22",
+          "149.154.160.0/20",
+          "91.105.192.0/23",
+          "91.108.20.0/22",
+          "185.76.151.0/24",
+          "2001:b28:f23d::/48",
+          "2001:b28:f23f::/48",
+          "2001:67c:4e8::/48",
+          "2001:b28:f23c::/48",
+          "2a0a:f280::/32",
+          "geoip:telegram"
+        ],
+        "outboundTag": "warp"
+      },
+      {
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "block"
+      },
+      {
         "inboundTag": [
           "dokodemo-in"
         ],
@@ -91,11 +167,11 @@
     ]
   },
   "policy": {
-        "levels": {
-            "0": {
-                "handshake": 2,
-                "connIdle": 120
-            }
-        }
+    "levels": {
+      "0": {
+        "handshake": 2,
+        "connIdle": 120
+      }
     }
+  }
 }
