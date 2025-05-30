@@ -1,3 +1,6 @@
+```
+bash <(wget --no-check-certificate -qO- ${GH_PROXY}https://raw.githubusercontent.com/Thaomtam/-Xray-examples/refs/heads/main/ipleak.sh)
+```
 ## **Configuration Overview**
 
 | | No Domain Registration Required | Resolves TLS in TLS | Built-in Multiplexing | Accessible via CDN |
