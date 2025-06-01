@@ -1,0 +1,127 @@
+{
+    "log": {
+        "level": "trace",
+        "timestamp": true
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "Cloudflare",
+                "address": "https://1.1.1.1/dns-query",
+                "detour": "direct"
+            }
+        ],
+        "rules": [
+            {
+                "outbound": "any",
+                "server": "Cloudflare"
+            }
+        ],
+        "strategy": "prefer_ipv4",
+        "independent_cache": true
+    },
+    "ntp": {
+        "enabled": true,
+        "server": "time.apple.com",
+        "server_port": 123,
+        "interval": "60m"
+    },
+    "inbounds": [
+        {
+            "type": "vless",
+            "tag": "vless-in",
+            "listen": "::",
+            "listen_port": 443,
+            "users": [
+                {
+                    "uuid": "thaomtam",
+                    "flow": "xtls-rprx-vision"
+                }
+            ],
+            "tls": {
+                "enabled": true,
+                "server_name": "anytls.ggff.net",
+                "reality": {
+                    "enabled": true,
+                    "handshake": {
+                        "server": "127.0.0.1",
+                        "server_port": 8003
+                    },
+                    "private_key": "iPFLvcKpdcx_KLXNccPte3epjRUP9UNa06U4tJYy-2k",
+                    "short_id": [
+                        "0123456789abcdef"
+                    ]
+                }
+            }
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": 53
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+            {
+                "inbound": [
+                    "vless-in"
+                ],
+                "action": "route",
+                "outbound": "warp"
+            },
+            {
+                "action": "sniff"
+            }
+        ],
+        "final": "warp",
+        "find_process": true,
+        "auto_detect_interface": true
+    },
+    "outbounds": [
+        {
+            "type": "direct",
+            "tag": "direct"
+        }
+    ],
+    "endpoints": [
+        {
+            "type": "wireguard",
+            "tag": "warp",
+            "mtu": 1280,
+            "address": [
+                "172.16.0.2/32",
+                "2606:4700::/128"
+            ],
+            "private_key": "aCBWQ+czdXeGkTx+XBM6yAPd5gtsvqZxa58GRvDULkc=",
+            "peers": [
+                {
+                    "address": "engage.cloudflareclient.com",
+                    "port": 2408,
+                    "public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+                    "allowed_ips": [
+                        "0.0.0.0/0",
+                        "::/0"
+                    ],
+                    "reserved": [
+                        50,
+                        109,
+                        194
+                    ]
+                }
+            ]
+        }
+    ],
+    "experimental": {
+        "cache_file": {
+            "enabled": true
+        }
+    }
+}
